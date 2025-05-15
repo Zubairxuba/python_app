@@ -1,0 +1,35 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: xconnect
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: miniapp-serverless
+service: miniapp-env
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  timeout: 30
+  environment:
+    DATABASE_URL: postgres://postgres:root@localhost:5432/alchemy
+
+functions:
+  app:
+    handler: main.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer: true
+
+package:
+  exclude:
+    - node_modules/**
+    - venv/**
+    - __pycache__/**
